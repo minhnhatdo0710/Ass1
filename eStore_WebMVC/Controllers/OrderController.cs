@@ -61,6 +61,20 @@ namespace eStore_WebMVC.Controllers
                     }
                 }
             }
+            string productUrl = "http://localhost:5220/api/Product";
+            List<Product> products = new List<Product>();
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.GetAsync(productUrl))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        products = await content.ReadFromJsonAsync<List<Product>>();
+
+                    }
+                }
+            }
+            ViewBag.products = products;
             ViewBag.members = member;
 
 
@@ -132,13 +146,28 @@ namespace eStore_WebMVC.Controllers
                     }
                 }
             }
+            string productUrl = "http://localhost:5220/api/Product";
+            List<Product> products = new List<Product>();
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.GetAsync(productUrl))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        products = await content.ReadFromJsonAsync<List<Product>>();
+
+                    }
+                }
+            }
+            ViewBag.products = products;
+            ViewBag.productIds = order.OrderDetails.Select(od => od.ProductId).ToList();
             ViewBag.members = members;
             ViewBag.memberId = order.MemberId;
             return View(order);
 
         }
         [HttpPost]
-        public async Task<IActionResult> UpdateOrder(Order order)
+        public async Task<IActionResult> UpdateOrder(CreateOrderDto order)
         {
             var session = this.HttpContext.Session;
             var user = session.GetString("user");

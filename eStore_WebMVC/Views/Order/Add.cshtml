@@ -61,6 +61,27 @@
         </div>
     </div>
     <div class="form-group row mt-3">
+        <label for="product" class="col-sm-2 col-form-label">Products</label>
+        <div class="col-sm-5">
+
+            <select name="productIds" required multiple>
+
+                @foreach (var item in (List<Product>)ViewBag.products)
+                {
+                    
+                        <option value="@item.ProductId">@item.ProductName</option>
+                    
+                }
+
+
+            </select>
+
+
+
+        </div>
+
+    </div>
+    <div class="form-group row mt-3">
         <div class="col-sm-5 offset-sm-2">
             <button type="submit" class="btn btn-primary">Save</button>
         </div>

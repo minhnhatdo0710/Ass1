@@ -38,7 +38,10 @@ namespace eStore_API.Controllers
             {
                 using (var context = new Assignment01_PRN231Context())
                 {
-                    var data = context.Orders.Include(o => o.Member).FirstOrDefault(o => o.OrderId == id);
+                    var data = context.Orders.Include(o => o.Member)
+                    .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                    .FirstOrDefault(o => o.OrderId == id);
                     if (data == null)
                     {
                         return NotFound();
@@ -65,7 +68,14 @@ namespace eStore_API.Controllers
                         MemberId = o.MemberId,
                         OrderDate = o.OrderDate,
                         RequiredDate = o.RequiredDate,
-                        ShippedDate = o.ShippedDate
+                        ShippedDate = o.ShippedDate,
+                        OrderDetails = o.ProductIds.Select(id => new OrderDetail()
+                        {
+                            ProductId = id,
+                            Quantity = 1,
+                            Discount = 0,
+                            UnitPrice = context.Products.Find(id).UnitPrice
+                        }).ToList()
                     };
 
                     context.Orders.Add(order);
@@ -86,7 +96,9 @@ namespace eStore_API.Controllers
             {
                 using (var context = new Assignment01_PRN231Context())
                 {
-                    var data = context.Orders.FirstOrDefault(o => o.OrderId == id);
+                    var data = context.Orders
+                    .Include(o => o.OrderDetails)
+                    .FirstOrDefault(o => o.OrderId == id);
                     if (data == null)
                     {
                         return NotFound();
@@ -96,7 +108,14 @@ namespace eStore_API.Controllers
                     data.RequiredDate = o.RequiredDate;
                     data.ShippedDate = o.ShippedDate;
                     data.Freight = o.Freight;
-
+                    context.OrderDetails.RemoveRange(data.OrderDetails);
+                    data.OrderDetails = o.ProductIds.Select(id => new OrderDetail()
+                    {
+                        ProductId = id,
+                        Quantity = 1,
+                        Discount = 0,
+                        UnitPrice = context.Products.Find(id).UnitPrice
+                    }).ToList();
                     context.Orders.Update(data);
                     context.SaveChanges();
                     return Ok();
