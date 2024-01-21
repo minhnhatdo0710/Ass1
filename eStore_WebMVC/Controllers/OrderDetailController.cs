@@ -1,4 +1,5 @@
-﻿using eStore_WebMVC.Models;
+﻿using eStore_WebMVC.Dto;
+using eStore_WebMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -25,8 +26,37 @@ namespace eStoreMVC.Controllers
                     }
                 }
             }
+            List<OrderDetailViewModel> viewModels = new List<OrderDetailViewModel>();
+
+            using (HttpClient apiClient = new HttpClient())
+            {
+                string apiUri = "http://localhost:5220/api/OrderDetails/GetProductNameById";
+
+                foreach (var orderDetail in orderDetails)
+                {
+                    string productName = string.Empty;
+
+                    using (HttpResponseMessage res = await apiClient.GetAsync(apiUri + "?id=" + orderDetail.ProductId))
+                    {
+                        if (res.IsSuccessStatusCode)
+                        {
+                            string data = await res.Content.ReadAsStringAsync();
+                            productName = data;
+                        }
+                    }
+
+                    OrderDetailViewModel viewModel = new OrderDetailViewModel
+                    {
+                        OrderDetail = orderDetail,
+                        ProductName = productName
+                    };
+
+                    viewModels.Add(viewModel);
+                }
+            }
+
             ViewBag.orderId = id;
-            return View(orderDetails);
+            return View(viewModels);
         }
         public async Task<IActionResult> Add()
         {
@@ -114,5 +144,7 @@ namespace eStoreMVC.Controllers
 
             return RedirectToAction("Index", new { id = orderId });
         }
+
+       
     }
 }

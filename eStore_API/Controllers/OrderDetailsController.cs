@@ -58,5 +58,26 @@ namespace eStore_API.Controllers
             }
             return orderDetails;
         }
+
+        [HttpGet("GetProductNameById")]
+        public async Task<IActionResult> GetProductNameById(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(product.ProductName);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi nếu cần thiết
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
