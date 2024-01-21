@@ -19,10 +19,17 @@ namespace eStoreMVC.Controllers
             {
                 using (HttpResponseMessage res = await client.GetAsync(orderDetailUri + "/id?id=" + id))
                 {
-                    using (HttpContent content = res.Content)
+                    if (res.IsSuccessStatusCode)
                     {
-                        string data = content.ReadAsStringAsync().Result;
-                        orderDetails = JsonConvert.DeserializeObject<List<OrderDetail>>(data);
+                        using (HttpContent content = res.Content)
+                        {
+                            string data = content.ReadAsStringAsync().Result;
+                            orderDetails = JsonConvert.DeserializeObject<List<OrderDetail>>(data);
+                        }
+                    }
+                    else
+                    {
+                        return View();
                     }
                 }
             }

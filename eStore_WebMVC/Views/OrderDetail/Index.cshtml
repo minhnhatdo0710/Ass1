@@ -30,29 +30,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            
-            <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderDetail.UnitPrice)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.OrderDetail.Quantity)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.OrderDetail.Discount)
-            </td>
-            <td>
+        @if(Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDetail.UnitPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDetail.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDetail.Discount)
+                    </td>
+                    <td>
 
 
 
-                    <a asp-controller="OrderDetail" asp-action="Delete" asp-route-id="@item.OrderDetail.OrderDetailId" asp-route-orderId="@ViewBag.orderId">Delete</a>
-            </td>
-        </tr>
-}
+                        <a asp-controller="OrderDetail" asp-action="Delete" asp-route-id="@item.OrderDetail.OrderDetailId" asp-route-orderId="@ViewBag.orderId">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
 </table>
